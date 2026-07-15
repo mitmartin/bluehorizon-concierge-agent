@@ -1,60 +1,45 @@
 # Blue Horizon Concierge Agent
 
-**Greenfield — built live during the demo via GitHub Copilot plan mode.**
+**Greenfield — built live during the demo with GitHub Copilot.**
 
-This repository is intentionally minimal. It exists so the live GitHub Copilot enablement demo can start from an almost blank application, then use Copilot plan mode to interview the presenter, write the BRD, design the architecture, create the implementation plan, build the app, and deploy it.
+This repository is intentionally (almost) empty. It exists so the live GitHub Copilot
+enablement demo can start from **near zero** — no application code, no build config, no
+infrastructure — and let Copilot interview the presenter, write the requirements, design
+the architecture, plan the work, build the app, and deploy it.
 
-## Intended app
+## What is checked in on purpose
 
-The app to be built live is an **AI Guest Concierge / shore-excursion recommender** for the fictional **Blue Horizon Cruise Line**. A guest will provide interests, travel style, accessibility needs, and a port or sailing. The application will call the sibling `bluehorizon-excursions-api` (`GET /excursions`, `GET /excursions/search`, and planned `GET /excursions/recommendations`) and use an LLM to recommend and explain shore excursions.
+The only things here are the customizations we "bring in" and the empty doc placeholders
+Copilot will fill during the demo:
 
-## Intended architecture
+- `.github/copilot-instructions.md` — how Blue Horizon wants Copilot to build (stack, conventions, guardrails).
+- `.github/agents/solution-shaper.agent.md` — the custom agent that runs the interview-and-build.
+- `.github/skills/brd-writer/SKILL.md` — a skill that turns the interview into a BRD.
+- `docs/BRD.md`, `docs/architecture.md`, `docs/implementation-plan.md` — placeholders that read *"To be generated live."*
 
-- Lightweight web front end for the guest concierge experience.
-- Small TypeScript/Node API or agent backend.
-- Excursion data from the sibling `bluehorizon-excursions-api`.
-- LLM recommendations via Azure OpenAI or GitHub Models.
-- Infrastructure as code with `azd` and Bicep.
-- Deployment target: Azure Container Apps.
+There is **no** `src/`, no `package.json` / `requirements.txt`, no `Dockerfile`, no
+`azure.yaml`, and no `infra/`. Copilot creates all of that live during the demo.
 
-## What is here now
+## The app we build live
 
-Only a tiny placeholder Node/Express service is included so `azd up` has a reliable pre-deploy fallback before the live build replaces it.
+An **AI Guest Concierge / shore-excursion recommender** for the fictional
+**Blue Horizon Cruise Line**. A guest provides interests, travel style, accessibility
+needs, and a port or sailing; the app calls the sibling `bluehorizon-excursions-api`
+(`GET /excursions`, `GET /excursions/search`) and uses an LLM to recommend and explain
+shore excursions. The finished app deploys to Azure Container Apps.
 
-The audience should see the real application built from near-zero during the demo.
+## Pre-built fallback
 
-## Live-build artifacts
-
-Copilot will generate these during the demo:
-
-- `docs/BRD.md`
-- `docs/architecture.md`
-- `docs/implementation-plan.md`
-
-## Local placeholder
-
-```powershell
-npm install
-npm run build
-npm start
-```
-
-Then open `http://localhost:3000`.
-
-## Azure deployment
-
-The presenter can deploy the placeholder or the completed live-built app with:
+If the live build runs short on time, a complete, tested version lives on the
+**`prebuilt/horizon-helper`** branch (a self-contained Python app plus `infra/` and
+`azure.yaml`). Deploy it with:
 
 ```powershell
+git checkout prebuilt/horizon-helper
 azd auth login
-azd env new bluehorizon-concierge-demo --location eastus2
 azd up
 ```
 
-Prerequisites: Azure CLI, Azure Developer CLI, Node.js, Docker or a compatible container build path available to `azd`, and permission to create a resource group, Azure Container Registry, Log Analytics workspace, Azure Container Apps environment, and Container App.
-
-## Copilot custom assets
-
-- `.github/copilot-instructions.md` guides Copilot toward the intended Blue Horizon stack and conventions.
-- `.github/agents/solution-shaper.agent.md` uses the documented `.agent.md` front-matter style for Copilot custom agents.
-- `.github/skills/brd-writer/SKILL.md` uses the documented repository skill-folder convention assumed for Copilot skills.
+Prerequisites for deployment: Azure CLI, Azure Developer CLI (`azd`), and permission to
+create a resource group, Azure Container Registry, Log Analytics workspace, Azure
+Container Apps environment, and Container App.
