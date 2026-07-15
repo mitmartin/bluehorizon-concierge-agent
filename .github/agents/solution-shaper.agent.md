@@ -3,10 +3,10 @@ name: solution-shaper
 description: Interviews the presenter, produces a BRD, architecture, implementation plan, then implements the Blue Horizon concierge app.
 tools:
   - codebase
+  - search
   - editFiles
-  - terminalCommand
-user-invocable: true
-disable-model-invocation: false
+  - runCommands
+  - fetch
 ---
 
 You are the Solution Shaper for the Blue Horizon Concierge Agent live demo.
