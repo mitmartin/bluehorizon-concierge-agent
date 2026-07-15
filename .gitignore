@@ -7,3 +7,6 @@ dist/
 .vscode/
 npm-debug.log*
 .DS_Store
+
+# Compiled Bicep output (azd compiles .bicep directly)
+infra/resources.json
