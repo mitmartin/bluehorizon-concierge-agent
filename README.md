@@ -1,60 +1,35 @@
-# Blue Horizon Concierge Agent
+# Horizon Helper — pre-built fallback (tested reference)
 
-**Greenfield — built live during the demo via GitHub Copilot plan mode.**
+> **This branch is the safety net for Demo 2.** `main` is the empty greenfield scaffold you build live. If the live build runs into trouble, `git checkout prebuilt/horizon-helper` and you have a **working, tested** app.
 
-This repository is intentionally minimal. It exists so the live GitHub Copilot enablement demo can start from an almost blank application, then use Copilot plan mode to interview the presenter, write the BRD, design the architecture, create the implementation plan, build the app, and deploy it.
+**Horizon Helper** is a small chat web app: a guest describes their port, interests, and budget, and an **Azure AI Foundry agent** recommends 2–3 shore excursions from a curated list. Built with FastAPI + `azure-ai-agents` + a static UI. Verified working end-to-end against a real Foundry project on 2026-07-15.
 
-## Intended app
-
-The app to be built live is an **AI Guest Concierge / shore-excursion recommender** for the fictional **Blue Horizon Cruise Line**. A guest will provide interests, travel style, accessibility needs, and a port or sailing. The application will call the sibling `bluehorizon-excursions-api` (`GET /excursions`, `GET /excursions/search`, and planned `GET /excursions/recommendations`) and use an LLM to recommend and explain shore excursions.
-
-## Intended architecture
-
-- Lightweight web front end for the guest concierge experience.
-- Small TypeScript/Node API or agent backend.
-- Excursion data from the sibling `bluehorizon-excursions-api`.
-- LLM recommendations via Azure OpenAI or GitHub Models.
-- Infrastructure as code with `azd` and Bicep.
-- Deployment target: Azure Container Apps.
-
-## What is here now
-
-Only a tiny placeholder Node/Express service is included so `azd up` has a reliable pre-deploy fallback before the live build replaces it.
-
-The audience should see the real application built from near-zero during the demo.
-
-## Live-build artifacts
-
-Copilot will generate these during the demo:
-
-- `docs/BRD.md`
-- `docs/architecture.md`
-- `docs/implementation-plan.md`
-
-## Local placeholder
-
+## Run it locally (proven — this is the primary fallback)
 ```powershell
-npm install
-npm run build
-npm start
+# 1) Python deps
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+# 2) Point at the Foundry project + model (Entra auth via your az login)
+az login                      # if not already
+$env:AI_FOUNDRY_PROJECT_ENDPOINT = "https://emailagent-mcaps-aifoundry.services.ai.azure.com/api/projects/project-mcaps"
+$env:AI_FOUNDRY_MODEL_DEPLOYMENT = "gpt-4o-mini"
+
+# 3) Run
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+# open http://127.0.0.1:8000  ->  try: "Cozumel, snorkeling, 2 kids, ~$150pp"
 ```
 
-Then open `http://localhost:3000`.
+## What's inside
+- `app/main.py` — FastAPI: serves the UI, `GET /health`, `POST /api/chat`.
+- `app/agent.py` — the Foundry agent wiring (`AgentsClient`, `DefaultAzureCredential`, one agent + one thread).
+- `app/excursions.py` — the ~12-item excursion catalog + the agent's grounding instructions.
+- `static/index.html`, `static/app.js` — the chat UI.
+- `requirements.txt` — **pinned** versions known to work (`azure-ai-agents==1.1.0`).
 
-## Azure deployment
+## Deploy to Azure (optional)
+`azd up` builds and deploys the container. For the agent to work in the cloud, the Container App's managed identity needs the **Azure AI User** role on the Foundry account, plus the two `AI_FOUNDRY_*` env vars set on the app. (Locally you don't need this — your `az login` covers auth.)
 
-The presenter can deploy the placeholder or the completed live-built app with:
-
-```powershell
-azd auth login
-azd env new bluehorizon-concierge-demo --location eastus2
-azd up
-```
-
-Prerequisites: Azure CLI, Azure Developer CLI, Node.js, Docker or a compatible container build path available to `azd`, and permission to create a resource group, Azure Container Registry, Log Analytics workspace, Azure Container Apps environment, and Container App.
-
-## Copilot custom assets
-
-- `.github/copilot-instructions.md` guides Copilot toward the intended Blue Horizon stack and conventions.
-- `.github/agents/solution-shaper.agent.md` uses the documented `.agent.md` front-matter style for Copilot custom agents.
-- `.github/skills/brd-writer/SKILL.md` uses the documented repository skill-folder convention assumed for Copilot skills.
+## Prerequisites
+- An Azure AI Foundry project with a `gpt-4o-mini` deployment (we use the existing `emailagent-mcaps-aifoundry / project-mcaps`).
+- Signed in via `az login` (no API keys — MCAPS uses Entra).

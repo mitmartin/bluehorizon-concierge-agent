@@ -5,7 +5,7 @@ services:
   concierge:
     project: .
     host: containerapp
-    language: ts
+    language: python
     docker:
       path: Dockerfile
       remoteBuild: true

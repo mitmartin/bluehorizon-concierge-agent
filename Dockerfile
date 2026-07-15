@@ -1,16 +1,9 @@
-FROM node:24-alpine AS build
+FROM python:3.11-slim
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY tsconfig.json ./
-COPY src ./src
-RUN npm run build
-
-FROM node:24-alpine AS runtime
-ENV NODE_ENV=production
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=build /app/dist ./dist
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app ./app
+COPY static ./static
+ENV PORT=80
 EXPOSE 80
-CMD ["node", "dist/server.js"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
