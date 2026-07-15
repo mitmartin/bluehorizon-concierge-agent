@@ -1,0 +1,13 @@
+name: bluehorizon-concierge-agent
+metadata:
+  template: bluehorizon-concierge-agent@0.1.0
+services:
+  concierge:
+    project: .
+    host: containerapp
+    language: ts
+    docker:
+      path: Dockerfile
+      remoteBuild: true
+infra:
+  provider: bicep

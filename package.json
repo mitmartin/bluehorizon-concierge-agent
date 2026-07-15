@@ -1,0 +1,24 @@
+{
+  "name": "bluehorizon-concierge-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Blue Horizon Cruise Line AI guest concierge greenfield live-demo scaffold.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
