@@ -64,7 +64,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       activeRevisionsMode: 'Single'
       ingress: {
         external: true
-        targetPort: 3000
+        targetPort: 80
         transport: 'auto'
         allowInsecure: false
       }
@@ -83,7 +83,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             {
               name: 'PORT'
-              value: '3000'
+              value: '80'
             }
           ]
           resources: {

@@ -1,7 +1,7 @@
 import express from 'express';
 
 const app = express();
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 80);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'bluehorizon-concierge-agent' });
